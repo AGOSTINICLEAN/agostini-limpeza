@@ -5,6 +5,8 @@ import { Menu, LogOut, Settings, User } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { logout, getCurrentUser } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
+import Image from "next/image";
+import logo from "@/public/logo.png";
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -20,8 +22,8 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   };
 
   return (
-    <nav className="bg-white border-b border-gray-200 px-4 py-3 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center">
+    <nav className="h-16 bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 flex items-center">
+      <div className="flex items-center justify-between w-full">
         <div className="flex items-center gap-4">
           <button
             onClick={onMenuClick}
@@ -30,7 +32,16 @@ export function Navbar({ onMenuClick }: NavbarProps) {
           >
             <Menu className="w-6 h-6" />
           </button>
-          <h1 className="text-xl font-bold text-primary-600">Agostini</h1>
+          <div className="flex items-center gap-4 w-full justify-star">
+  <Image
+    src={logo}
+    alt="Agostini Limpeza Especializada"
+    width={180}
+    height={70}
+    className="object-contain"
+    />
+
+</div>
         </div>
 
         <div className="flex items-center gap-4">
@@ -43,7 +54,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
               <span className="text-2xl">{user.avatar}</span>
             </div>
           )}
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <button className="p-2 hover:bg-gray-100 rounded-lg" aria-label="Settings">
               <Settings className="w-5 h-5" />
             </button>

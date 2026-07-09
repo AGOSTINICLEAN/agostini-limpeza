@@ -1,25 +1,31 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { RecentBookings } from '@/components/dashboard/RecentBookings';
 import { getCurrentUser } from '@/lib/auth';
 import { Calendar, Users, DollarSign, CheckCircle } from 'lucide-react';
+import ClientHome from '@/components/client/ClientHome'
 
 export default function DashboardPage() {
+  const router = useRouter();
   const user = getCurrentUser();
+
+  if (user?.role === "client") {
+   return <ClientHome />;
+}
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
+
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Bem-vindo, {user?.name}! 👋
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Aqui está um resumo do seu sistema de agendamentos.
-        </p>
-      </div>
+
+      {/* Stats Grid */}
+
+      {/* Recent Bookings */}
+
+      {/* Quick Actions */}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

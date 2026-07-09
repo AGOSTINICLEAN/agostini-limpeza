@@ -56,13 +56,13 @@ export default function SettingsPage() {
                 Email
               </label>
               <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 outline-none"
-              />
+  type="email"
+  name="email"
+  value={formData.email}
+  onChange={handleChange}
+  disabled
+  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 outline-none"
+/>
             </div>
 
             <div>

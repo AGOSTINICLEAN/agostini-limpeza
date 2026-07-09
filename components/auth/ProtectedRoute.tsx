@@ -9,10 +9,14 @@ interface ProtectedRouteProps {
   requiredRole?: string;
 }
 
-export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
+export function ProtectedRoute({
+  children,
+  requiredRole,
+}: ProtectedRouteProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
     const user = getCurrentUser();
@@ -27,20 +31,21 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
       return;
     }
 
-    setIsAuthorized(true);
-    setIsLoading(false);
+    setAuthorized(true);
+    setLoading(false);
   }, [router, requiredRole]);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4" />
-          <p className="text-gray-600">Carregando...</p>
-        </div>
+        Carregando...
       </div>
     );
   }
 
-  return isAuthorized ? <>{children}</> : null;
+  if (!authorized) {
+    return null;
+  }
+
+  return <>{children}</>;
 }

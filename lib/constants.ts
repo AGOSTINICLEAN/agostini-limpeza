@@ -24,10 +24,67 @@ export const SERVICE_TYPES = [
 
 // Navigation Links
 export const DASHBOARD_NAV_ITEMS = [
-  { href: '/dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
-  { href: '/dashboard/calendar', label: 'Calendário', icon: 'Calendar' },
-  { href: '/dashboard/bookings', label: 'Agendamentos', icon: 'BookOpen' },
-  { href: '/dashboard/clients', label: 'Clientes', icon: 'Users' },
-  { href: '/dashboard/employees', label: 'Funcionários', icon: 'UserCheck' },
-  { href: '/dashboard/settings', label: 'Configurações', icon: 'Settings' },
+  
+  {
+    href: "/dashboard",
+    label: "Início",
+    icon: "LayoutDashboard",
+    roles: ["admin", "client"],
+  },
+  {
+    href: "/dashboard/calendar",
+    label: "Calendário",
+    icon: "Calendar",
+    roles: ["admin", "client"],
+  },
+  {
+    href: "/dashboard/bookings",
+    label: "Agendamentos",
+    icon: "BookOpen",
+    roles: ["admin", "client"],
+  },
+  {
+    href: "/dashboard/clients",
+    label: "Clientes",
+    icon: "Users",
+    roles: ["admin"],
+  },
+  {
+    href: "/dashboard/employees",
+    label: "Funcionários",
+    icon: "UserCheck",
+    roles: ["admin"],
+  },
+  {
+    href: "/dashboard/settings",
+    label: "Configurações",
+    icon: "Settings",
+    roles: ["admin"],
+  },
+] as const;
+export const sidebarItems = [
+  {
+    href: "/dashboard/workshop",
+    label: "Workshop",
+    icon: "Layout",
+    roles: ["admin"],
+  },
+  {
+    href: "/dashboard/employees",
+    label: "Funcionários",
+    icon: "UserCheck",
+    roles: ["admin"],
+  },
+  {
+    href: "/dashboard/calendar",
+    label: "Calendário",
+    icon: "Calendar",
+    roles: ["admin", "client"],
+  },
+  {
+    href: "/dashboard/bookings",
+    label: "Agendamentos",
+    icon: "BookOpen",
+    roles: ["admin", "client"],
+  },
 ] as const;
