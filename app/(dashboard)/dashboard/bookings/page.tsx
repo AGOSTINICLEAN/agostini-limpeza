@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { getCurrentUser } from '@/lib/auth';
 import { getBookings } from '@/lib/bookings';
 
-export const MOCK_BOOKINGS = [
+const MOCK_BOOKINGS = [
   {
     id: '1',
     client: 'Maria Santos',

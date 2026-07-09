@@ -11,6 +11,7 @@ import {
   UserCheck,
   Settings,
   X,
+  MessageCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DASHBOARD_NAV_ITEMS } from '@/lib/constants'
@@ -58,12 +59,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-  'fixed lg:static left-0 top-0 h-full w-64 bg-gray-900 text-white pt-6 z-40 transform transition-transform',
+  'fixed lg:static left-0 top-0 h-full w-64 bg-gray-900 text-white pt-6 z-40 flex flex-col',
   isOpen ? 'translate-x-0 lg:translate-x-0' : '-translate-x-full lg:translate-x-0'
 )}
       >
 
-        <nav className="space-y-1 px-8">
+        <nav className="flex-1 space-y-1 px-8">
           {filteredNavItems.map((item) => {
             const isActive = pathname === item.href
             const icon = ICON_MAP[item.icon]
@@ -82,8 +83,29 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </Link>
             )
           })}
-        </nav>
-      </aside>
+          </nav>
+        <div className="p-4">
+  <div className="rounded-xl bg-white/10 border border-white/10 p-4">
+    <h3 className="text-sm font-semibold text-white">
+      💬 Suporte Agostini
+    </h3>
+
+    <p className="mt-2 text-xs text-gray-300 leading-5">
+      Dúvidas ou precisa de ajuda?
+      Nossa equipe está pronta para atender você.
+    </p>
+
+    <a
+      href="https://wa.me/5547992387395?text=Olá! Vim pelo sistema Agostini Limpeza e preciso de ajuda."
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-4 flex items-center justify-center rounded-lg bg-green-500 hover:bg-green-600 px-4 py-2 text-sm font-medium text-white transition"
+    >
+      Chamar no WhatsApp
+    </a>
+  </div>
+</div>
+</aside>
     </>
   )
 }
