@@ -41,3 +41,18 @@ export async function saveBooking(booking: {
 
   return data;
 }
+export async function updateBookingStatus(
+  id: string,
+  status: string
+) {
+  const { data, error } = await supabase
+    .from("bookings")
+    .update({ status })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}

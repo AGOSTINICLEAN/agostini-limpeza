@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { getCurrentUser } from '@/lib/auth';
-import { getBookings } from '@/lib/bookings';
+import { getBookings } from '@/lib/bookings-db';
 
 const MOCK_BOOKINGS = [
   {
@@ -39,7 +39,11 @@ for (let minutos = 360; minutos <= 1320; minutos += 30) {
 
   horarios.push(`${hora}:${minuto}`);
 }
-  const bookings = getBookings();
+  const [bookings, setBookings] = useState<any[]>([]);
+
+React.useEffect(() => {
+  getBookings().then(setBookings);
+}, []);
 
   const filteredBookings =
   filter === 'all'
