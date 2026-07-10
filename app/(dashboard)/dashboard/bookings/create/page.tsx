@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { saveBooking, isTimeAvailable, getBookings } from "@/lib/bookings";
@@ -9,10 +9,13 @@ import { getAvailableTimes } from '@/lib/bookings';
 
 export default function CreateBookingPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const params =
+  typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search)
+    : new URLSearchParams();
 
-const selectedDate = searchParams.get('date') || '';
-const selectedTime = searchParams.get('time') || '';
+const selectedDate = params.get('date') || '';
+const selectedTime = params.get('time') || '';
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     client: '',
