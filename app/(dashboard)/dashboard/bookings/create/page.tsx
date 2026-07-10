@@ -58,13 +58,21 @@ const availableTimes =
   const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setIsLoading(true);
-  if (new Date(formData.date) < new Date(new Date().toDateString())) {
-  alert("Não é possível agendar em datas passadas.");
+  const hoje = new Date();
+hoje.setHours(0, 0, 0, 0);
+
+const dataSelecionada = new Date(formData.date);
+dataSelecionada.setHours(0, 0, 0, 0);
+
+if (dataSelecionada < hoje) {
+  alert("Não é permitido realizar agendamentos com datas retroativas.");
+  setIsLoading(false);
   return;
 }
 
 if (!isTimeAvailable(formData.date, formData.time)) {
   alert("Este horário já está reservado.");
+  setIsLoading(false);
   return;
 }
 
@@ -137,7 +145,6 @@ const horariosOcupados = bookings
   name="date"
   value={formData.date}
   onChange={handleChange}
-  min={new Date().toISOString().split("T")[0]}
   className="w-full h-[46px] px-3 border border-gray-300 rounded-lg appearance-none text-center"
   style={{ 
     textAlign: "center", 
