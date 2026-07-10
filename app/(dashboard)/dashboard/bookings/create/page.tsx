@@ -33,8 +33,21 @@ time: selectedTime,
   }));
 }, [selectedDate, selectedTime]);
 const availableTimes =
-  formData.date !== ''
-    ? getAvailableTimes(formData.date)
+  formData.date !== ""
+    ? getAvailableTimes(formData.date).filter((hora) => {
+        if (formData.date !== new Date().toISOString().split("T")[0]) {
+          return true;
+        }
+
+        const agora = new Date();
+
+        const [h, m] = hora.split(":").map(Number);
+
+        const horario = new Date();
+        horario.setHours(h, m, 0, 0);
+
+        return horario.getTime() >= agora.getTime() + 60 * 60 * 1000;
+      })
     : [];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -124,6 +137,7 @@ const horariosOcupados = bookings
   name="date"
   value={formData.date}
   onChange={handleChange}
+  min={new Date().toISOString().split("T")[0]}
   className="w-full h-[46px] px-3 border border-gray-300 rounded-lg appearance-none text-center"
   style={{ 
     textAlign: "center", 
