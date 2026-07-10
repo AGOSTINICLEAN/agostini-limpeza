@@ -75,21 +75,17 @@ if (!isTimeAvailable(formData.date, formData.time)) {
   setIsLoading(false);
   return;
 }
-
-  const booking = {
-    id: Date.now().toString(),
-    clientName: formData.client,
-    phone: '',
-    address: formData.address,
-    service: formData.service,
-    date: formData.date,
-    time: formData.time,
-    notes: formData.notes,
-    status: 'pending' as const,
-  };
-
-  saveBooking(booking);
-
+saveBooking({
+  id: Date.now().toString(),
+  clientName: formData.client,
+  phone: "",
+  address: formData.address,
+  service: formData.service,
+  date: formData.date,
+  time: formData.time,
+  notes: formData.notes,
+  status: "pending",
+});
   setIsLoading(false);
 
   router.push('/dashboard/bookings');
