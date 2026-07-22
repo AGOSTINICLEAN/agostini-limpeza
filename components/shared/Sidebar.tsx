@@ -28,23 +28,19 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 }
 
 interface SidebarProps {
+  role: string
   isOpen: boolean
   onClose?: () => void
 }
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ role, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
-
-  const user =
-  typeof window !== "undefined"
-    ? JSON.parse(localStorage.getItem("currentUser") ?? '{"role":"client"}')
-    : { role: "client" };
 
   const filteredNavItems = DASHBOARD_NAV_ITEMS.filter((item) => {
     if (!item.roles) return true;
-    return item.roles.includes(user.role)
-  })
-  const isClient = user?.role === 'client'
+    return item.roles.includes(role);
+    })
+  const isClient = role === 'client'
 
   return (
     <>

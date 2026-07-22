@@ -4,17 +4,29 @@ import { useParams, useRouter } from 'next/navigation';
 import {
   getBookings,
   updateBookingStatus,
-} from "@/lib/bookings";
+} from "@/lib/bookings-db";
 import { getCurrentUser} from "@/lib/auth";
-
+import { useEffect, useState } from "react";
 export default function BookingDetailsPage() {
   const { id } = useParams();
   const router = useRouter();
 
 
-  const booking = getBookings().find(
-    (b) => b.id.toString() === id
-  );
+  const [booking, setBooking] = useState<any>(null);
+
+useEffect(() => {
+  async function loadBooking() {
+    const bookings = await getBookings();
+
+    const found = bookings.find(
+      (b: any) => b.id.toString() === id
+    );
+
+    setBooking(found ?? null);
+  }
+
+  loadBooking();
+}, [id]);
   const user = getCurrentUser();
   const isAdmin = user?.role === "admin";
   const changeStatus = (

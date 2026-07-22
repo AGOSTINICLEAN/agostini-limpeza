@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { saveBooking, isTimeAvailable, getBookings } from "@/lib/bookings";
-import { getAvailableTimes } from '@/lib/bookings';
+import {isTimeAvailable, saveBooking, getBookings, getAvailableTimes } from "@/lib/bookings-db";
+import { supabase } from "@/lib/supabase";
+import { isPrerenderInterruptedError } from 'next/dist/server/app-render/dynamic-rendering';
 
 export default function CreateBookingPage() {
   const router = useRouter();
+  const [userId, setUserId] = useState("");
   const params =
   typeof window !== 'undefined'
     ? new URLSearchParams(window.location.search)
@@ -18,13 +20,13 @@ const selectedDate = params.get('date') || '';
 const selectedTime = params.get('time') || '';
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    client: '',
-    service: '',
-    date: selectedDate,
-time: selectedTime,
-    address: '',
-    notes: '',
-  });
+  client: "",
+  service: "",
+  date: selectedDate,
+  time: selectedTime,
+  address: "",
+  notes: "",
+});
   React.useEffect(() => {
   setFormData((prev) => ({
     ...prev,
@@ -32,23 +34,65 @@ time: selectedTime,
     time: selectedTime,
   }));
 }, [selectedDate, selectedTime]);
-const availableTimes =
-  formData.date !== ""
-    ? getAvailableTimes(formData.date).filter((hora) => {
-        if (formData.date !== new Date().toISOString().split("T")[0]) {
-          return true;
-        }
 
-        const agora = new Date();
+const [availableTimes, setAvailableTimes] = useState<string[]>([]);
 
-        const [h, m] = hora.split(":").map(Number);
+React.useEffect(() => { 
+  async function carregarHorarios() {
+    if (!formData.date) {
+      setAvailableTimes([]);
+      return;
+    }
 
-        const horario = new Date();
-        horario.setHours(h, m, 0, 0);
+    const horarios = await getAvailableTimes(formData.date);
 
-        return horario.getTime() >= agora.getTime() + 60 * 60 * 1000;
-      })
-    : [];
+    const horariosFiltrados = horarios.filter((hora: string) => {
+      if (formData.date !== new Date().toISOString().split("T")[0]) {
+        return true;
+      }
+
+      const agora = new Date();
+
+      const [h, m] = hora.split(":").map(Number);
+
+      const horario = new Date();
+      horario.setHours(h, m, 0, 0);
+
+      return horario.getTime() >= agora.getTime() + 60 * 60 * 1000;
+    });
+
+    setAvailableTimes(horariosFiltrados);
+
+  }
+  carregarHorarios();
+}, [formData.date]);
+
+  React.useEffect(() => {
+  async function carregarUsuario() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      setUserId(user.id);
+
+      const { data: profile } = await supabase
+  .from("profiles")
+  .select("nome")
+  .eq("id", user.id)
+  .single()
+
+  if (profile) {
+  setFormData(prev => ({
+    ...prev,
+    client: profile.nome
+  }))
+}
+    }
+  }
+
+  carregarUsuario();
+}, [formData.date]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -61,7 +105,8 @@ const availableTimes =
   const hoje = new Date();
 hoje.setHours(0, 0, 0, 0);
 
-const dataSelecionada = new Date(formData.date);
+const [ano, mes, dia] = formData.date.split("-").map(Number);
+const dataSelecionada = new Date(ano, mes -1, dia);
 dataSelecionada.setHours(0, 0, 0, 0);
 
 if (dataSelecionada < hoje) {
@@ -75,30 +120,29 @@ if (!isTimeAvailable(formData.date, formData.time)) {
   setIsLoading(false);
   return;
 }
-saveBooking({
-  id: Date.now().toString(),
-  clientName: formData.client,
-  phone: "",
-  address: formData.address,
-  service: formData.service,
-  date: formData.date,
-  time: formData.time,
-  notes: formData.notes,
-  status: "pending",
-});
+console.log("Antes de salvar");
+
+  try {
+  await saveBooking({
+    client_name: formData.client,
+    user_id: userId,
+    phone: "",
+    address: formData.address,
+    date: formData.date,
+    time: formData.time,
+    notes: formData.notes,
+    status: "pending",
+  });
+
   setIsLoading(false);
 
   router.push('/dashboard/bookings');
-};
-const bookings = getBookings();
-
-const horariosOcupados = bookings
-  .filter(
-    (booking) =>
-      booking.date === formData.date &&
-      booking.status !== "cancelled"
-  )
-  .map((booking) => booking.time);
+} catch (error) {
+  console.error(error);
+  alert("Erro ao salvar o agendamento.");
+  setIsLoading(false);
+}
+  }
 
   return (
     <div className="max-w-7x1 mx-auto p-4 sm:p-6 lg:p-8">
@@ -123,6 +167,7 @@ const horariosOcupados = bookings
       name="client"
       value={formData.client}
       onChange={handleChange}
+      readOnly
       className="w-full px-4 py-2 border border-gray-300 rounded-lg"
       placeholder="Nome do cliente"
       required
@@ -234,3 +279,4 @@ const horariosOcupados = bookings
     </div>
   );
 }
+

@@ -27,6 +27,12 @@ export const DASHBOARD_NAV_ITEMS = [
   
   {
     href: "/dashboard",
+    label: "Dashboard",
+    icon: "LayoutDashboard",
+    roles: ["admin"],
+  },
+  {
+    href: "/dashboard/cliente",
     label: "Início",
     icon: "LayoutDashboard",
     roles: ["admin", "client"],

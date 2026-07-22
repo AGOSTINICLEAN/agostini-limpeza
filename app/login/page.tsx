@@ -12,20 +12,7 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
-import { setCurrentUser, MOCK_USERS } from '@/lib/auth';
-
-const DEMO_CREDENTIALS = [
-    {
-        email: 'admin@agostini.com',
-        password: 'demo123',
-        role: 'admin' as const,
-    },
-    {
-      email: 'cliente@agostini.com',
-      password: 'demo123',
-      role: 'client' as const,
-    }
-];
+import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -47,29 +34,64 @@ export default function LoginPage() {
 
         await new Promise((r) => setTimeout(r, 500));
 
-        const cred = DEMO_CREDENTIALS.find(
-            (c) =>
-                c.email === email &&
-                c.password === password
-        );
+        const { data, error } = await supabase.auth.signInWithPassword({
+  email,
+  password,
+});
 
-        if (!cred) {
-            setLoading(false);
-            setError('E-mail ou senha inválidos.');
-            return;
-        }
+if (error) {
+  setLoading(false);
 
-        const user = MOCK_USERS[cred.role];
-        setCurrentUser(user);
+  if (error.message === "Invalid login credentials") {
+    setError("E-mail ou senha inválidos.");
+  } else {
+    setError("Ocorreu um erro ao fazer login.");
+  }
 
-        if (user.role === "admin") {
-  router.push("/dashboard");
+  return;
+}
+const user = data.user;
+
+if (!user) {
+  setLoading(false);
+  setError("Usuário não encontrado.");
+  return;
+}
+console.log("USER ID:", user.id);
+const { data: profile, error: profileError } = await supabase
+  .from("profiles")
+  .select("*")
+  .eq("id", user.id)
+  .single();
+console.log("PROFILE:", profile);
+console.log("PROFILE ERROR:", profileError);
+
+if (profileError) {
+  console.log(profileError);
+
+  setLoading(false);
+  setError(profileError.message);
+
+  return;
 }
 
-if (user.role === "client") {
-  router.push("/dashboard");
+if (!profile) {
+  setLoading(false);
+  setError("Perfil do usuário não encontrado.");
+  return;
+}
+
+if (profile.must_change_password) {
+  router.push("/primeiro-acesso");
+  return;
+}
+
+if (profile.first_login) {
+  router.push("/primeiro-acesso")
+} else if (profile.role === "admin") {
+  router.push("/dashboard")
 } else {
-  router.push("/dashboard");
+  router.push("/dashboard/cliente")
 }
     }
 

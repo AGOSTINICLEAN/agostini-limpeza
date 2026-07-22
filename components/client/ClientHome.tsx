@@ -3,12 +3,22 @@
 import Link from 'next/link'
 import { Calendar, User, ArrowRight, Sparkles } from 'lucide-react'
 import { getCurrentUser } from "@/lib/auth";
-import { getBookings } from "@/lib/bookings";
+import { getBookings } from "@/lib/bookings-db";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react"
 
 export default function ClientHome() {
 const user = getCurrentUser();
-const bookings = getBookings()
+const [bookings, setBookings] = useState<any[]>([])
+
+useEffect(() => {
+  async function carregarBookings() {
+    const data = await getBookings()
+    setBookings(data || [])
+  }
+
+  carregarBookings()
+}, [])
 const confirmedBookings= bookings
 .filter(b => b.status === "confirmed")
 .sort((a, b) => {

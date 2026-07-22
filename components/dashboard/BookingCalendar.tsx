@@ -10,7 +10,7 @@ import { useState } from 'react';
 import {
   hasAvailableTimes,
   getAvailableTimes,
-} from '@/lib/bookings';
+} from '@/lib/bookings-db';
 
 const eventos = [
   {
@@ -36,11 +36,13 @@ export default function BookingCalendar() {
   const [selectedDate, setSelectedDate] = useState('');
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
 
-  function handleDateClick(info: any) {
+  async function handleDateClick(info: any) {
     const data = info.dateStr;
 
+    const horarios = await getAvailableTimes(data);
+
+    setAvailableTimes(horarios);
     setSelectedDate(data);
-    setAvailableTimes(getAvailableTimes(data));
   }
   const dataFormatada = selectedDate
   ? selectedDate.split("-").reverse().join("/")

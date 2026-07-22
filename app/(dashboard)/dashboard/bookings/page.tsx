@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { getCurrentUser } from '@/lib/auth';
-import { getBookings } from '@/lib/bookings-db';
+import { getMyBookings } from '@/lib/bookings-db';
+import { supabase } from "@/lib/supabase";
 
 const MOCK_BOOKINGS = [
   {
@@ -42,7 +43,17 @@ for (let minutos = 360; minutos <= 1320; minutos += 30) {
   const [bookings, setBookings] = useState<any[]>([]);
 
 React.useEffect(() => {
-  getBookings().then(setBookings);
+  async function carregarBookings() {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const bookings = await getMyBookings(user.id);
+
+    setBookings(bookings);
+  }
+
+  carregarBookings();
 }, []);
 
   const filteredBookings =
@@ -91,31 +102,23 @@ React.useEffect(() => {
           return (
             <Card
               key={booking.id}
-              className="hover:shadow-md transition-shadow"
+              className="relative hover:shadow-md transition-shadow"
             >
-              <CardContent className="pt-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div className="flex-1">
+              <CardContent className="py-4">
+                <div className="flex items-start justify-between gap-4 w-full">
+                  <div className="w-2/3">
                     <div className="flex items-start justify-between mb-2">
                       <h3 className="font-semibold text-lg text-gray-900">
                         {booking.clientName}
                       </h3>
-
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${config.bg} ${config.text}`}
-                      >
-                        {config.label}
-                      </span>
                     </div>
 
-                    <p className="text-gray-600 text-sm mb-3">
-                      {booking.service}
-                    </p>
-
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-2 gap-x-28 gap-y-2 text-sm">
                       <div>
                         <p className="text-gray-500">📅 Data</p>
-                        <p className="font-medium">{booking.date}</p>
+                        <p className="font-medium">
+                          {new Date (booking.date).toLocaleDateString("pt-BR")}
+                          </p>
                       </div>
 
                       <div>
@@ -126,18 +129,24 @@ React.useEffect(() => {
                       <div className="col-span-2">
                         <p className="text-gray-500">📍 Local</p>
                         <p className="font-medium">{booking.address}</p>
-                      </div>
-                    </div>
-                  </div>
+                      
+                <div className="flex flex-col items-end gap-2 absolute top-4 right-4">
+  <span
+    className={`infine-flex px-3 py-1 rounded-full text-sm font-medium ${config.bg} ${config.text}`}
+  >
+    {config.label}
+  </span>
 
-                  <div className="flex gap-2">
-                    <Link href={`/dashboard/bookings/${booking.id}`}>
-                      <Button variant="outline" size="sm">
-                        Ver Detalhes
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
+  <Link href={`/dashboard/bookings/${booking.id}`}>
+    <Button variant="outline" size="sm">
+      Ver Detalhes
+    </Button>
+  </Link>
+  </div>
+</div>
+</div>
+</div>
+</div>
               </CardContent>
             </Card>
           );
