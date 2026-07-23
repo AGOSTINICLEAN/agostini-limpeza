@@ -28,7 +28,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 }
 
 interface SidebarProps {
-  role: string
+  role: 'admin' | 'client'
   isOpen: boolean
   onClose?: () => void
 }
