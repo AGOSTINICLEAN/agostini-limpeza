@@ -22,8 +22,16 @@ export const SERVICE_TYPES = [
   { id: '4', name: 'Limpeza Especial', description: 'Serviço customizado' },
 ] as const;
 
+type UserRole = 'admin' | 'client';
+
+interface DashboardNavItem {
+  href: string;
+  label: string;
+  icon: string;
+  roles?: UserRole[];
+}
 // Navigation Links
-export const DASHBOARD_NAV_ITEMS = [
+export const DASHBOARD_NAV_ITEMS: DashboardNavItem[] = [
   
   {
     href: "/dashboard",
