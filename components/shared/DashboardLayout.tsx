@@ -6,7 +6,7 @@ import { Sidebar } from './Sidebar';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  role: string
+  role: 'admin' | 'client'
 }
 
 export function DashboardLayout({
